@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "types/globals.d.ts"
+    ],
+    "resolveJsonModule": true,
+    "target": "ES2021",
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "types/global.d.ts",
+    "init.sql",
+  ],
+  "exclude": [
+    "test/*"
+  ]
+}

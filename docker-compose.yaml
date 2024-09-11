@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  user-auth:
+    build: .
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - public
+    volumes:
+      - user-auth:/var/lib/
+    environment:
+      WSRS_DATABASE_USER: ${WSRS_DATABASE_USER}
+      WSRS_DATABASE_PASSWORD: ${WSRS_DATABASE_PASSWORD}
+      WSRS_DATABASE_NAME: ${WSRS_DATABASE_NAME}
+      WSRS_DATABASE_PORT: 5432
+      WSRS_DATABASE_HOST: 'db'
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET_ID: ${GOOGLE_CLIENT_SECRET_ID}	
+      URL: "http://localhost:8080"
+      CLIENT_URL_SUCCESS: "/"
+      CLIENT_URL_ERROR: "/login"
+      RABBIT_MQ_HOST: 'amqp://rabbitmq'
+      JWT_SECRET: "123456"
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - ${WSRS_DATABASE_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: ${WSRS_DATABASE_USER}
+      POSTGRES_PASSWORD: ${WSRS_DATABASE_PASSWORD}
+      POSTGRES_DB: ${WSRS_DATABASE_NAME}
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - public
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - 8081:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 123
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - public
+
+volumes:
+  db:
+  user-auth:
+  pgadmin:
+
+networks:
+  public:
+    driver: bridge
