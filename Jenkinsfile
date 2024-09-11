@@ -4,7 +4,7 @@ pipeline {
     stage("Build docker Image"){
       steps {
         script{
-          dockerapp = docker.build("nivaldeir/user-autenticacao:v1", '-f ./src/PedeLogo.Catalogo.Api/Dockerfile')
+          dockerapp = docker.build("nivaldeir/user-autenticacao:v1", '-f ./Dockerfile')
         }
       }
     }
