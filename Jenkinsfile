@@ -5,7 +5,6 @@ pipeline {
       steps {
         script{
           dockerapp = docker.build("nivaldeir/user-autenticacao:v1", '-f ./Dockerfile')
-          
         }
       }
     }
