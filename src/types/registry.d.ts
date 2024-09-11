@@ -1,0 +1,1 @@
+export type RegistryKey = "factory_usecases"
