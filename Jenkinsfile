@@ -3,14 +3,19 @@ pipeline {
   stages {
     stage("Build docker Image"){
       steps {
-        script{
+        script {
           dockerapp = docker.build("nivaldeir/user-autenticacao:v1", '-f ./Dockerfile .')
         }
       }
     }
     stage("Push docker Image"){
       steps {
-        sh "echo 'Envio de imagem'"
+        script {
+          docker.wdthRegistry("https://registry.hub.docker.com", "dockerhub"){
+            dockerapp.push("latest")
+            dockerapp.push("v1")
+          }
+        }
       }
     }
     stage("Deploy no Kubernetes"){
