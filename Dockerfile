@@ -11,6 +11,8 @@ COPY . .
 
 RUN npm run build
 
+RUN npm run migrate
+
 FROM node:alpine AS production
 
 WORKDIR /usr/app
