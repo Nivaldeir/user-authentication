@@ -11,7 +11,7 @@ pipeline {
     stage("Push docker Image"){
       steps {
         script {
-          docker.wdthRegistry("https://registry.hub.docker.com", "dockerhub"){
+          docker.wothRegistry('https://registry.hub.docker.com', 'dockerhub'){
             dockerapp.push("latest")
             dockerapp.push("v1")
           }
