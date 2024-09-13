@@ -44,10 +44,12 @@ metadata:
 spec:
   selector:
     app: api
-  type: LoadBalancer
+  type: NodePort
   ports:
-  - port: 80
-    targetPort: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30007
 ---
 apiVersion: apps/v1
 kind: Deployment
