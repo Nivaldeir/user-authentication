@@ -4,7 +4,7 @@ pipeline {
     stage("Build docker Image"){
       steps {
         script {
-          dockerapp = docker.build("nivaldeir/user-autenticacao:v1", '-f ./Dockerfile .')
+          dockerapp = docker.build("nivaldeir/user-autenticacao:${env.BUILD_ID}", '-f ./Dockerfile .')
         }
       }
     }
@@ -13,14 +13,20 @@ pipeline {
         script {
           docker.withRegistry('https://registry.hub.docker.com', 'dockerhub'){
             dockerapp.push("latest")
-            dockerapp.push("v1")
+            dockerapp.push("${env.BUILD_ID}")
           }
         }
       }
     }
     stage("Deploy no Kubernetes"){
+      environment {
+        tag_version = "${env.BUILD_ID}"
+      }
       steps {
-        sh "echo 'Deploy no Kubernetes'"
+        withKubeConfigs([credentialsId: 'kubeconfig']) {
+          sh 'sed -i "s/{{TAG}}/$tag_version/g" ./k8s/deployment.yaml'
+          sh 'kubectl apply -f ./k8s/deployment.yaml'
+        }
       }
     }
   }
