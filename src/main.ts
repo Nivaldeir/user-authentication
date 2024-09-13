@@ -6,12 +6,12 @@ import Queue from "./infra/queue";
 import { UseCasesFactory } from "./core/app/factory/use-case-factory";
 import { RepositoryFactory } from "./core/app/factory/repository-factory";
 async function init() {
-  // try {
-  //   const queue = new RabbitMQAdapter();
-  //   await queue.connect();
-  //   new Queue(queue);
-  // } catch (error) {
-  // }
+  try {
+    const queue = new RabbitMQAdapter();
+    await queue.connect();
+    new Queue(queue);
+  } catch (error) {
+  }
   const repositorys = new RepositoryFactory();
   const registry = Registry.getInstance();
   registry.provide(

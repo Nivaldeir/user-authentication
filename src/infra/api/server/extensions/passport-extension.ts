@@ -3,6 +3,7 @@ import flash from "connect-flash";
 import { Express } from "express";
 import { IHttpServerSetting } from "../../../../types/http";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import Logger from "../../../logger";
 
 export class PassportExtension implements IHttpServerSetting {
   setConfig(app: Express) {
@@ -14,6 +15,10 @@ export class PassportExtension implements IHttpServerSetting {
       res.locals.error_msg = req.flash("error_msg");
       next();
     });
+    if (!process.env.GOOGLE_CLIENT_ID && !process.env.GOOGLE_CLIENT_SECRET_ID) {
+      Logger.instance.error("Variables for google ids not supported");
+      return;
+    }
     passport.use(
       new GoogleStrategy(
         {
@@ -24,7 +29,9 @@ export class PassportExtension implements IHttpServerSetting {
         async (accessToken, refreshToken, profile, done) => {
           try {
             done(null, {
-              accessToken, refreshToken, profile
+              accessToken,
+              refreshToken,
+              profile,
             });
           } catch (err) {
             done(err, false);
@@ -35,6 +42,5 @@ export class PassportExtension implements IHttpServerSetting {
     passport.serializeUser((user: any, done) => {
       done(null, user.id);
     });
-   
   }
 }

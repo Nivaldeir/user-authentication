@@ -32,6 +32,10 @@ spec:
             value: "/"
           - name: CLIENT_URL_ERROR
             value: "/login"
+          - name: GOOGLE_CLIENT_ID
+            value: "login"
+          - name: GOOGLE_CLIENT_SECRET_ID
+            value: "login"
           - name: RABBIT_MQ_HOST
             value: "amqp://localhost"
           - name: JWT_SECRET
