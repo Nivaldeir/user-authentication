@@ -13,7 +13,8 @@ spec:
     spec:
       containers:
       - name: api
-        image: nivaldeir/user-autenticacao:{{TAG}}
+        # image: nivaldeir/user-autenticacao:{{TAG}}
+        image: nivaldeir/user-autenticacao:latest
         ports:
         - containerPort: 8080
         resources: {}
@@ -52,8 +53,8 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
-      nodePort: 30007
+      targetPort: 8080
+      nodePort: 32480
 ---
 apiVersion: apps/v1
 kind: Deployment

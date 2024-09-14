@@ -15,5 +15,5 @@ server.settings([
 ]);
 
 server.addRoutes([new AuthController(server),new UserController(server)]);
-server.listen(parseInt(process.env.PORT!) | 8080);
+server.listen(parseInt(process.env.PORT!));
 export default server;
