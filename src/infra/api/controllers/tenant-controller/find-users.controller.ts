@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { Controller, HttpMethod, ResponseType } from "../controller";
 import { FindUsersTenant } from "../../../../core/domain/usecase/tenant/find-users";
 import Logger from "../../../logger";
+import Middlware from "../../middleware";
+import { Token } from "../../../../core/domain/usecase/token";
 
 export class FindUsersController implements Controller {
   constructor(
@@ -9,6 +11,12 @@ export class FindUsersController implements Controller {
     private readonly method: HttpMethod,
     private readonly service: FindUsersTenant
   ) {}
+  getMiddlewares?(): Array<
+    (request: Request, response: Response, next: NextFunction) => void
+  > {
+    return [Middlware.validateRequest];
+  }
+
   getHandler(): (
     request: Request<any>,
     response: Response<ResponseType>,
@@ -16,9 +24,10 @@ export class FindUsersController implements Controller {
   ) => Promise<void> {
     return async (request, response): Promise<void> => {
       try {
-        const { tenantId } = request.cookies;
+        let validToken = Token.verify(request.cookies["session.token"]) as any;
+        if (!validToken) throw new Error("Token invalido");
         const output = await this.service.execute({
-          tenantId: tenantId,
+          tenantId: validToken.tenantId,
         });
         response.status(200).send({
           message: "Sucesso",

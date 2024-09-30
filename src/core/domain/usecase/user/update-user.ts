@@ -5,12 +5,16 @@ export class UpdateUser {
   async execute(input: Input) {
     const user = await this.userRepository.findById(input.id, input.tenantId);
     if (!user) throw new Error("User not found");
-    await this.userRepository.update(user);
+    console.log(user)
+    await this.userRepository.update(user, input.tenantId);
   }
 }
 type Input = {
   id: string;
   tenantId: string;
-  username?: string;
+  admin?: boolean;
+  active?: boolean;
+  name?: string;
   password?: string;
+  avatar?: string;
 };

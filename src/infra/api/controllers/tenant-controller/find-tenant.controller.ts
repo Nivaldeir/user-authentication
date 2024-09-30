@@ -1,7 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Controller, HttpMethod, ResponseType } from "../controller";
 import Logger from "../../../logger";
 import { FindTenant } from "../../../../core/domain/usecase/tenant/find-tenant";
+import Middlware from "../../middleware";
+import { Token } from "../../../../core/domain/usecase/token";
 
 export class FindTenantController implements Controller {
   constructor(
@@ -9,6 +11,11 @@ export class FindTenantController implements Controller {
     private readonly method: HttpMethod,
     private readonly service: FindTenant
   ) {}
+  getMiddlewares?(): Array<
+    (request: Request, response: Response, next: NextFunction) => void
+  > {
+    return [Middlware.validateRequest];
+  }
 
   getHandler(): (
     request: Request<any>,
@@ -16,8 +23,9 @@ export class FindTenantController implements Controller {
   ) => Promise<void> {
     return async (request, response): Promise<void> => {
       try {
-        const { id } = request.params;
-        const output = await this.service.execute({ id });
+        let validToken = Token.verify(request.cookies["session.token"]) as any;
+        if (!validToken) throw new Error("Token invalido");
+        const output = await this.service.execute({ id: validToken.tenantId });
         response.status(200).send({
           message: "Sucesso",
           data: output,

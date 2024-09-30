@@ -24,7 +24,6 @@ export class AuthGoogleCallbackController implements Controller {
             const { token, tenant } = await this.service.execute({
               email: user.profile.emails[0].value,
               name: user.profile.displayName,
-              username: user.profile.displayName,
               avatar: user.profile?.photos[0].value,
               refreshToken: user.profile.refreshToken,
               accessToken: user.profile.accessToken,
@@ -46,8 +45,10 @@ export class AuthGoogleCallbackController implements Controller {
               path: "/",
               maxAge: 1000 * 60 * 60 * 24 * 7,
             });
-            response.cookie("session.tenant", tenant, {
+            response.cookie("session.tenant", tenant.id, {
               httpOnly: false,
+              // domain: ,
+              encode: encodeURIComponent,
               secure: process.env.NODE_ENV === "production",
               path: "/",
               maxAge: 1000 * 60 * 60 * 24 * 7,

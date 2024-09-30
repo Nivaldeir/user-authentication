@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import { Controller, HttpMethod, ResponseType } from "../controller";
 import Logger from "../../../logger";
-import Middlware from "../../middleware";
-import { tenantUpdate } from "./schema/tenant-schema";
 import { UpdateTenant } from "../../../../core/domain/usecase/tenant/update-tenant";
 
-export class UpdateUpdateController implements Controller {
+export class UpdateTenantController implements Controller {
   constructor(
     private readonly path: string,
     private readonly method: HttpMethod,

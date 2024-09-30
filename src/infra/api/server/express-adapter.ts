@@ -10,7 +10,7 @@ export default class ExpressAdapter implements IHttpServer {
   constructor() {
     this.app = express();
     this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }))
+    this.app.use(express.urlencoded({ extended: true }));
   }
   start(port: number) {
     return this.app.listen(port, () => {
@@ -28,7 +28,7 @@ export default class ExpressAdapter implements IHttpServer {
         : [];
 
       if (typeof this.app[method] === "function") {
-        this.app[method](path, handler);
+        this.app[method](path, middlewares, handler);
         Logger.instance.success(`[ ${method.toUpperCase()} ] ${path}`);
       } else {
         console.error(`Método HTTP inválido: ${method}`);

@@ -22,8 +22,7 @@ export class GoogleAuth {
     if (!newUser) {
       newUser = User.create({
         email: input.email!,
-        name: input.name,
-        username: input.username,
+        name: input.name
       });
       await this.userRepository.create(newUser);
       const provider = await this.providerRepository.findByName("google");
@@ -42,6 +41,7 @@ export class GoogleAuth {
       id: newUser.id,
       email: newUser.email.value,
       name: newUser.name,
+      admin: newUser.admin,
       tenantId: input.tenantId,
     });
     return { token, tenant };
@@ -50,7 +50,6 @@ export class GoogleAuth {
 interface Input {
   email: string;
   name?: string;
-  username?: string;
   refreshToken?: string;
   accessToken?: string;
   tenantId: string;

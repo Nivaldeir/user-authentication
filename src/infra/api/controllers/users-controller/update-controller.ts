@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import { Controller, HttpMethod, ResponseType } from "../controller";
 import Logger from "../../../logger";
 import { UpdateUser } from "../../../../core/domain/usecase/user/update-user";
-import Middlware from "../../middleware";
-import { userUpdate } from "./schema/user-schema";
 
 export class UpdateUserController implements Controller {
   constructor(
@@ -20,11 +18,12 @@ export class UpdateUserController implements Controller {
       try {
         const { id } = request.params;
         const { tenantId } = request.cookies;
-        const { username, password, avatar } = request.body;
+        const { name, password, avatar } = request.body;
         const output = await this.service.execute({
           id,
+          name,
           password,
-          username,
+          avatar,
           tenantId,
         });
         response.status(200).send({

@@ -9,52 +9,54 @@ export class TenantDatabase implements ITenantRepository {
   constructor(private readonly db: DatabaseConnection<Tenant>) {}
   async findUsers(id: string): Promise<OutputFindUsers> {
     const tenantResult = await this.db.query(
-      `SELECT * FROM tenants WHERE id = $1`,
-      [id]
+        `SELECT * FROM tenants WHERE id = $1`,
+        [id]
     );
     if (tenantResult.length === 0) {
-      throw new Error(`Tenant with ID ${id} not found`);
+        throw new Error(`Tenant with ID ${id} not found`);
     }
 
     const tenant = new Tenant({
-      id: tenantResult[0].id,
-      name: tenantResult[0].name,
-      createdAt: tenantResult[0].created_at,
-      updated: tenantResult[0].updated_at,
-      redirectUriError: tenantResult[0].redirect_url_error,
-      redirectUriSuccess: tenantResult[0].redirect_url_success,
+        id: tenantResult[0].id,
+        name: tenantResult[0].name,
+        createdAt: tenantResult[0].created_at,
+        updated: tenantResult[0].updated_at,
+        redirectUriError: tenantResult[0].redirect_url_error,
+        redirectUriSuccess: tenantResult[0].redirect_url_success,
     });
 
     const usersResult = await this.db.query(
-      `
-      SELECT 
-        u.id, 
-        u.email, 
-        u.name, 
-        u.created_at, 
-        u.updated_at 
-      FROM users u
-      INNER JOIN user_tenants ut ON u.id = ut.user_id
-      WHERE ut.tenant_id = $1
-      `,
-      [id]
+        `
+        SELECT 
+            u.id, 
+            u.email, 
+            u.name, 
+            u.created_at, 
+            u.updated_at,
+            ut.admin,
+            ut.is_active
+        FROM users u
+        INNER JOIN user_tenants ut ON u.id = ut.user_id
+        WHERE ut.tenant_id = $1
+        `,
+        [id]
     );
 
     const users = usersResult.map((user: any) => ({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      name: user.name,
-      admin: user.admin,
-      createdAt: user.created_at,
-      updatedAt: user.updated_at,
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        admin: user.admin, // adicionando admin
+        isActive: user.is_active, // adicione um campo para indicar se é ativo
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
     }));
 
     return {
-      tenant,
-      users,
+        tenant,
+        users,
     };
-  }
+}
 
   async find(id: string): Promise<Tenant> {
     const result = await this.db.query(

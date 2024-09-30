@@ -6,7 +6,7 @@ export class CorsExtension implements IHttpServerSetting {
     app.set("trust proxy", 1);
     app.use(
       cors({
-        origin: process.env.ORIGIN ? [process.env.ORIGIN] : ["*"],
+        origin: process.env.ORIGIN ? [process.env.ORIGIN, "http://localhost:3000"] : ["http://localhost:3000"],
         credentials: true,
         methods: ["GET", "DELETE", "PUT", "POST", "PATCH"],
       })

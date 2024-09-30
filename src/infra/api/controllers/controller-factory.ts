@@ -9,7 +9,7 @@ import { CreateTenantController } from "./tenant-controller/create-tenant.contro
 import { DeleteTenantController } from "./tenant-controller/delete-tenant.controller";
 import { FindTenantController } from "./tenant-controller/find-tenant.controller";
 import { FindUsersController } from "./tenant-controller/find-users.controller";
-import { UpdateUpdateController } from "./tenant-controller/update-tenant.controller";
+import { UpdateTenantController } from "./tenant-controller/update-tenant.controller";
 import { CreateUserController } from "./users-controller/create-user.controller";
 import { DeleteUserController } from "./users-controller/delete-user.controller";
 import { FindUserController } from "./users-controller/find-user.controller";
@@ -23,23 +23,20 @@ export class ControllerFactory {
     return [
       //Tenants
       new CreateTenantController("/tenant", "post", usecases.createTenant),
+      new FindUsersController("/tenant/users", "get", usecases.findUsersTenant),
       new FindTenantController("/tenant/:id", "get", usecases.findTenant),
-      new UpdateUpdateController("/tenant", "put", usecases.updateTenant),
+      new UpdateTenantController("/tenant", "put", usecases.updateTenant),
       new DeleteTenantController(
         "/tenant/:id",
         "delete",
         usecases.deleteTenant
       ),
-      new FindUsersController(
-        "/tenant/:id/users",
-        "get",
-        usecases.findUsersTenant
-      ),
+
       //Users
-      new CreateUserController("/users", "post", usecases.createUser),
-      new DeleteUserController("/users/:id", "delete", usecases.deleteUser),
-      new FindUserController("/users/:id", "get", usecases.findUser),
-      new UpdateUserController("/users/:id", "put", usecases.updateUser),
+      new CreateUserController("/user", "post", usecases.createUser),
+      new DeleteUserController("/user/:id", "delete", usecases.deleteUser),
+      new FindUserController("/user/:id", "get", usecases.findUser),
+      new UpdateUserController("/user/:id", "put", usecases.updateUser),
       //Auths
       new AuthLocalController("/auth", "post", usecases.authUserLocal),
       new AuthGoogleController("/auth/google", "get"),

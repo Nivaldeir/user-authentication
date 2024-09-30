@@ -3,17 +3,16 @@ import { Email } from "./email";
 
 type UserProps = {
   id: string;
-  username?: string;
   email: Email;
   name?: string;
   deletedAt: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
   admin?: boolean;
+  active?: boolean;
 };
 
 type UserCreateProps = {
-  username?: string;
   email: string;
   name?: string;
 };
@@ -26,6 +25,7 @@ export class User {
   createdAt?: Date;
   updatedAt?: Date;
   admin?: boolean;
+  active?: boolean;
   constructor(props: UserProps) {
     this.id = props.id;
     this.email = props.email;
@@ -33,6 +33,7 @@ export class User {
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
     this.admin = props.admin;
+    this.active = props.active;
   }
   static create(props: Omit<UserCreateProps, "id">): User {
     const id = randomUUID();
@@ -40,7 +41,6 @@ export class User {
       id: id,
       email: new Email(props.email),
       name: props.name,
-      username: props.username,
       deletedAt: null,
     });
   }
