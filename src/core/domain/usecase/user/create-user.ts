@@ -19,12 +19,11 @@ export class CreateUser {
       password: Password.create(input.password),
     });
     const output = await this.userRepository.create(user);
-    await this.authUserProvider.create(authUserProvider);
+    await this.authUserProvider.create(authUserProvider, input.tenantId);
     return {
       deleteAt: output.deletedAt,
       email: output.email.value,
       id: output.id,
-      username: output.username,
     };
   }
 }
@@ -33,6 +32,7 @@ type Input = {
   email: string;
   password: string;
   username?: string;
+  tenantId: string;
 };
 type Ouput = {
   deleteAt?: Date | null;

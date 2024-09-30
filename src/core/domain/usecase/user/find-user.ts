@@ -5,7 +5,7 @@ export class FindUser {
   constructor(private readonly userRepository: IUserRepository) {}
   async execute(input: Input): Promise<User> {
     try {
-      const output = await this.userRepository.findById(input.id);
+      const output = await this.userRepository.findById(input.id, input.tenantId);
       return output;
     } catch (error) {
       throw error;
@@ -14,4 +14,5 @@ export class FindUser {
 }
 type Input = {
   id: string;
+  tenantId: string;
 };

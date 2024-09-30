@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 
 export default interface IHttpServer {
-  on(params: InputHttp): any;
-  listen(port: number): void;
+  start(port: number): any;
 }
 
 export interface IHttpServerSetting {

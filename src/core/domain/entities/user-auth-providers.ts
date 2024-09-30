@@ -20,7 +20,6 @@ export class UserAuthProviders {
   refreshToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
-
   constructor(props: UserAuthPRovidersProps) {
     this.id = props.id;
     this.userId = props.userId;

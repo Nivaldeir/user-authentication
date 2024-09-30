@@ -9,6 +9,7 @@ type UserProps = {
   deletedAt: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
+  admin?: boolean;
 };
 
 type UserCreateProps = {
@@ -20,19 +21,18 @@ type UserCreateProps = {
 export class User {
   id: string;
   name?: string;
-  username?: string;
   email: Email;
   deletedAt: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
-
+  admin?: boolean;
   constructor(props: UserProps) {
     this.id = props.id;
-    this.username = props.username;
     this.email = props.email;
     this.deletedAt = props.deletedAt;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
+    this.admin = props.admin;
   }
   static create(props: Omit<UserCreateProps, "id">): User {
     const id = randomUUID();

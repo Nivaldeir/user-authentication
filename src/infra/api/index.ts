@@ -1,19 +1,17 @@
-import AuthController from "./controllers/auth-controller";
-import UserController from "./controllers/user-controller";
+import { ControllerFactory } from "./controllers/controller-factory";
+import { CookiesExtension } from "./extensions/cookies-extension";
+import { CorsExtension } from "./extensions/cors-extension";
+import { PassportExtension } from "./extensions/passport-extension";
+import { SessionExtension } from "./extensions/session-extension";
+import { SwaggerExtension } from "./extensions/swagger-extension";
 import ExpressAdapter from "./server/express-adapter";
-import { CorsExtension } from "./server/extensions/cors-extension";
-import { PassportExtension } from "./server/extensions/passport-extension";
-import { SessionExtension } from "./server/extensions/session-extension";
-import { SwaggerExtension } from "./server/extensions/swagger-extension";
-
 const server = new ExpressAdapter();
 server.settings([
   new SessionExtension(),  
   new PassportExtension(), 
   new CorsExtension(),
   new SwaggerExtension(),
+  new CookiesExtension()
 ]);
 
-server.addRoutes([new AuthController(server),new UserController(server)]);
-server.listen(parseInt(process.env.PORT!));
 export default server;

@@ -7,10 +7,10 @@ export default class {
   factory: UseCasesFactory;
   constructor(readonly queue: IQueue) {
     queue.consume("create-user", async (input: InputCreateUser) => {
-      await this.factory.create().createUser.execute({
-        email: input.email,
-        password: input.password,
-      });
+      // await this.factory.create().createUser.execute({
+      //   email: input.email,
+      //   password: input.password,
+      // });
     });
   }
 }

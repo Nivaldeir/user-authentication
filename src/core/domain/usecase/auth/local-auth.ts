@@ -11,12 +11,16 @@ export class LocalAuth implements IAuthStrategy {
   async execute(input: Input): Promise<{ token: string }> {
     try {
       const isUserExist = await this.userRepository.findByEmailOrUsername(
-        input.email
+        input.email, input.tenantId
       );
       if (isUserExist) {
         const user = await this.userAuthProvider.findUserById(isUserExist.id);
         if (user.password?.validate(input.password)) {
-          const token = Token.generate({ id: user.id });
+          const token = Token.generate({ 
+            id: isUserExist.id,
+            email: isUserExist.email,
+            name: isUserExist.name,
+          });
           return { token };
         }
       }
@@ -30,4 +34,5 @@ export class LocalAuth implements IAuthStrategy {
 interface Input {
   password: string;
   email: string;
+  tenantId: string
 }

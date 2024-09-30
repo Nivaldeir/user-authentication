@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { IUserAuthProviderRepository } from "../../../core/app/repository/user-auth-provider-repository";
 import { Password } from "../../../core/domain/entities/password";
 import { UserAuthProviders } from "../../../core/domain/entities/user-auth-providers";
@@ -5,8 +6,18 @@ import DatabaseConnection from "../../../types/database-connection";
 
 export class UserAuthProviderDatabase implements IUserAuthProviderRepository {
   constructor(private readonly db: DatabaseConnection<UserAuthProviders>) {}
-  async create(data: UserAuthProviders): Promise<UserAuthProviders> {
+  async create(
+    data: UserAuthProviders,
+    tenantId: string
+  ): Promise<UserAuthProviders> {
     try {
+      const tenant = await this.db.query(
+        `SELECT * FROM public.tenants WHERE id = $1`,
+        [tenantId]
+      );
+      if (tenant.length === 0) {
+        throw new Error(`Tenant with ID ${tenantId} not found`);
+      }
       const userValues = [
         data.id,
         data.userId,
@@ -19,6 +30,10 @@ export class UserAuthProviderDatabase implements IUserAuthProviderRepository {
       await this.db.query(
         `INSERT INTO public.user_auth_providers (id, user_id, provider_id, hashed_password, hashed_salt, access_token, refresh_token) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
         userValues
+      );
+      await this.db.query(
+        `INSERT INTO public.user_tenants (id, user_id, tenant_id) VALUES ($1, $2, $3)`,
+        [randomUUID(), data.userId, tenantId]
       );
       return data;
     } catch (error) {

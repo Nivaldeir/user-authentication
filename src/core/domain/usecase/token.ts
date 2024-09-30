@@ -1,5 +1,6 @@
 import * as jwt from "jsonwebtoken";
 export class Token {
+
   static generate(params: object) {
     const token = jwt.sign(params, process.env.JWT_SECRET || "123456789", {
       algorithm: "HS256",

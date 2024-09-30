@@ -5,19 +5,32 @@ import DatabaseConnection from "../../../types/database-connection";
 
 export class UserDatabase implements IUserRepository {
   constructor(private readonly db: DatabaseConnection<User>) {}
-  async findByEmailOrUsername(emailOrUsername: string): Promise<User | null> {
+  async findByEmailOrUsername(
+    emailOrUsername: string,
+    tenantId: string
+  ): Promise<User | null> {
     const query = `
-      SELECT * 
-      FROM users 
-      WHERE email = $1 OR username = $2
-    `;
-    const [result] = await this.db.query(query, [
+    SELECT u.* 
+    FROM users u
+    INNER JOIN user_tenants ut ON u.id = ut.user_id
+    WHERE ut.tenant_id = $1 
+      AND (u.email = $2) 
+      AND u.deleted_at IS NULL
+  `;
+
+    const results = await this.db.query(query, [
+      tenantId,
       emailOrUsername,
       emailOrUsername,
     ]);
-    if (!result) {
+    console.log(results)
+
+    if (results.length === 0) {
       return null;
     }
+
+    const result = results[0];
+
     return new User({
       id: result.id,
       email: new Email(result.email),
@@ -54,15 +67,14 @@ export class UserDatabase implements IUserRepository {
       deletedAt: user.deleted_at,
       email: new Email(user.email),
       id: user.id,
-      username: user.username,
     });
   }
 
   async create(data: User): Promise<User> {
     try {
-      const userValues = [data.id, data.username, data.email.value, data.name];
+      const userValues = [data.id, data.email.value, data.name];
       await this.db.query(
-        `INSERT INTO public.users (id, username, email, name) VALUES ($1, $2, $3, $4)`,
+        `INSERT INTO public.users (id, email, name) VALUES ($1, $2, $3)`,
         userValues
       );
       return data;
@@ -77,14 +89,13 @@ export class UserDatabase implements IUserRepository {
       await this.db.query("BEGIN");
       await this.db.query(
         `
-          INSERT INTO public.users (id, username, email, name) 
-          VALUES ($1, $2, $3, $4, $5)
+          INSERT INTO public.users (id, email, name) 
+          VALUES ($1, $2, $3, $4)
           ON CONFLICT (id) DO UPDATE 
-          SET username = EXCLUDED.username, 
-          email = EXCLUDED.email, 
+          SET email = EXCLUDED.email, 
           name = EXCLUDED.name, 
       `,
-        [data.id, data.username, data.email.value, data.name]
+        [data.id, data.email.value, data.name]
       );
       await this.db.query("COMMIT");
     } catch (error) {

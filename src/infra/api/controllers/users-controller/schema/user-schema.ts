@@ -19,6 +19,12 @@ export const userUpdate = z.object({
   }),
 });
 
+export const userFind = z.object({
+  params: z.object({
+    id: z.string(),
+  }),
+});
+
 export const userDelete = z.object({
   params: z.object({
     id: z.string(),

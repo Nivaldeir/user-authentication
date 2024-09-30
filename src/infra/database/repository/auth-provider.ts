@@ -12,6 +12,6 @@ export class AuthProviderDatabase implements IAuthProviderRepository {
     return new AuthProvider({
       id: provider.id,
       providerName: provider.name,
-    })
+    });
   }
 }

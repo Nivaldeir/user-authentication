@@ -1,17 +1,16 @@
 import { IUserRepository } from "../../../app/repository/user-repository";
-import { Password } from "../../entities/password";
 
 export class UpdateUser {
   constructor(private readonly userRepository: IUserRepository) {}
   async execute(input: Input) {
-    const user = await this.userRepository.findById(input.id);
+    const user = await this.userRepository.findById(input.id, input.tenantId);
     if (!user) throw new Error("User not found");
-    user.username = input.username ?? user.username;
     await this.userRepository.update(user);
   }
 }
 type Input = {
   id: string;
+  tenantId: string;
   username?: string;
   password?: string;
 };
